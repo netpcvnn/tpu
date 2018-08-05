@@ -40,8 +40,8 @@ class TfExampleDecoder(object):
             tf.FixedLenFeature((), tf.string, default_value='jpeg'),
         'image/filename':
             tf.FixedLenFeature((), tf.string, default_value=''),
-        'image/key/sha256':
-            tf.FixedLenFeature((), tf.string, default_value=''),
+        # 'image/key/sha256':
+        #     tf.FixedLenFeature((), tf.string, default_value=''),
         'image/source_id':
             tf.FixedLenFeature((), tf.string, default_value=''),
         'image/height':
@@ -61,40 +61,40 @@ class TfExampleDecoder(object):
             tf.VarLenFeature(tf.int64),
         'image/object/class/text':
             tf.VarLenFeature(tf.string),
-        'image/object/area':
-            tf.VarLenFeature(tf.float32),
-        'image/object/is_crowd':
-            tf.VarLenFeature(tf.int64),
-        'image/object/difficult':
-            tf.VarLenFeature(tf.int64),
-        'image/object/group_of':
-            tf.VarLenFeature(tf.int64),
-        'image/object/weight':
-            tf.VarLenFeature(tf.float32),
+        # 'image/object/area':
+        #     tf.VarLenFeature(tf.float32),
+        # 'image/object/is_crowd':
+        #     tf.VarLenFeature(tf.int64),
+        # 'image/object/difficult':
+        #     tf.VarLenFeature(tf.int64),
+        # 'image/object/group_of':
+        #     tf.VarLenFeature(tf.int64),
+        # 'image/object/weight':
+        #     tf.VarLenFeature(tf.float32),
     }
     self.items_to_handlers = {
         'image': slim_example_decoder.Image(
             image_key='image/encoded', format_key='image/format', channels=3),
         'source_id': (
             slim_example_decoder.Tensor('image/source_id')),
-        'key': (
-            slim_example_decoder.Tensor('image/key/sha256')),
+        # 'key': (
+        #     slim_example_decoder.Tensor('image/key/sha256')),
         'filename': (
             slim_example_decoder.Tensor('image/filename')),
         # Object boxes and classes.
         'groundtruth_boxes': (
             slim_example_decoder.BoundingBox(
                 ['ymin', 'xmin', 'ymax', 'xmax'], 'image/object/bbox/')),
-        'groundtruth_area': slim_example_decoder.Tensor(
-            'image/object/area'),
-        'groundtruth_is_crowd': (
-            slim_example_decoder.Tensor('image/object/is_crowd')),
-        'groundtruth_difficult': (
-            slim_example_decoder.Tensor('image/object/difficult')),
-        'groundtruth_group_of': (
-            slim_example_decoder.Tensor('image/object/group_of')),
-        'groundtruth_weights': (
-            slim_example_decoder.Tensor('image/object/weight')),
+        # 'groundtruth_area': slim_example_decoder.Tensor(
+        #     'image/object/area'),
+        # 'groundtruth_is_crowd': (
+        #     slim_example_decoder.Tensor('image/object/is_crowd')),
+        # 'groundtruth_difficult': (
+        #     slim_example_decoder.Tensor('image/object/difficult')),
+        # 'groundtruth_group_of': (
+        #     slim_example_decoder.Tensor('image/object/group_of')),
+        # 'groundtruth_weights': (
+        #     slim_example_decoder.Tensor('image/object/weight')),
     }
     label_handler = slim_example_decoder.Tensor('image/object/class/label')
     self.items_to_handlers['groundtruth_classes'] = label_handler
@@ -142,7 +142,7 @@ class TfExampleDecoder(object):
     tensors = decoder.decode(serialized_example, items=keys)
     tensor_dict = dict(zip(keys, tensors))
     is_crowd = 'groundtruth_is_crowd'
-    tensor_dict[is_crowd] = tf.cast(tensor_dict[is_crowd], dtype=tf.bool)
+    # tensor_dict[is_crowd] = tf.cast(tensor_dict[is_crowd], dtype=tf.bool)
     tensor_dict['image'].set_shape([None, None, 3])
 
     def default_groundtruth_weights():
@@ -150,12 +150,12 @@ class TfExampleDecoder(object):
           tf.shape(tensor_dict['groundtruth_boxes'])[0],
           dtype=tf.float32)
 
-    tensor_dict['groundtruth_weights'] = tf.cond(
-        tf.greater(
-            tf.shape(
-                tensor_dict['groundtruth_weights'])[0],
-            0), lambda: tensor_dict['groundtruth_weights'],
-        default_groundtruth_weights)
+    # tensor_dict['groundtruth_weights'] = tf.cond(
+    #     tf.greater(
+    #         tf.shape(
+    #             tensor_dict['groundtruth_weights'])[0],
+    #         0), lambda: tensor_dict['groundtruth_weights'],
+    #     default_groundtruth_weights)
     return tensor_dict
 
 
